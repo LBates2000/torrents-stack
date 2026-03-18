@@ -14,6 +14,7 @@ This stack routes only qBittorrent through WireGuard.
 ## Access
 - qBittorrent Web UI: http://localhost:8090
 - Jackett UI: http://localhost:9117
+- Note: Jackett may return `301`/`302` redirects to login; this is expected.
 - FlareSolverr API: http://localhost:8191
 
 ## First-time setup
