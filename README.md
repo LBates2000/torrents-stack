@@ -18,7 +18,8 @@ This stack routes only qBittorrent through WireGuard.
 
 ## First-time setup
 - Install Docker Desktop (or Docker Engine + Compose plugin).
-- Place your WireGuard client config in `./configs/wireguard/` (for example `wg0.conf`).
+- Configure WireGuard using `.env` values (server mode defaults are provided in `.env.example`).
+- Optional: if you are running in client mode, place your WireGuard client config in `./configs/wireguard/` (for example `wg0.conf`).
 - Copy `.env.example` to `.env` and adjust values for your host/network.
 - Start the stack with `docker compose up -d`.
 
@@ -31,7 +32,7 @@ docker compose up -d
 
 #### PowerShell
 ```powershell
-Copy-Item .env.example .env
+Copy-Item .env.example .env -Force
 docker compose up -d
 ```
 
