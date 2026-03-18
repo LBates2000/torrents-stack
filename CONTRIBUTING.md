@@ -4,6 +4,7 @@ Thanks for contributing to this project.
 
 ## Workflow
 - Create a branch from `main`.
+- Do not push directly to `main`; all changes must go through a pull request.
 - Keep changes focused and small.
 - Run local checks before opening a PR:
   - `docker compose config`
