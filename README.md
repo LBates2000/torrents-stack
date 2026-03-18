@@ -139,6 +139,7 @@ docker compose ps --format "table {{.Name}}\t{{.State}}\t{{.Health}}\t{{.Status}
 - Use GitHub issue templates for monthly maintenance and backup restore drills.
 - License: MIT (`LICENSE`).
 - Contribution guide: see `CONTRIBUTING.md`.
+- Scheduled image tag drift check: `.github/workflows/image-tag-drift.yml`.
 
 ## Author
 - Lawrence Bates (<Lawrence.Bates@gmail.com>)
