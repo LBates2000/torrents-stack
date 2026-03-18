@@ -30,7 +30,7 @@ services:
   # Only qbittorrent uses network_mode: service:wireguard.
   # Jackett and FlareSolverr run on app_net with their own port mappings.
   wireguard:
-    image: lscr.io/linuxserver/wireguard:latest    
+    image: lscr.io/linuxserver/wireguard:${WIREGUARD_IMAGE_TAG:-1.0.20250521-r1-ls105}
     <<: [*defaults, *common-dns]
     container_name: wireguard
     cap_add:
@@ -63,7 +63,7 @@ services:
       - app_net
 
   flaresolverr:
-    image: ghcr.io/flaresolverr/flaresolverr:latest
+    image: ghcr.io/flaresolverr/flaresolverr:${FLARESOLVERR_IMAGE_TAG:-v3.4.6}
     <<: [*defaults, *common-dns]
     container_name: flaresolverr
     ports:
@@ -81,7 +81,7 @@ services:
       - app_net
 
   jackett:
-    image: lscr.io/linuxserver/jackett:latest
+    image: lscr.io/linuxserver/jackett:${JACKETT_IMAGE_TAG:-v0.24.1385-ls344}
     <<: [*defaults, *common-dns, *common-volumes]
     container_name: jackett
     ports:
@@ -102,7 +102,7 @@ services:
       - app_net
 
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
+    image: lscr.io/linuxserver/qbittorrent:${QBITTORRENT_IMAGE_TAG:-5.1.4-r2-ls445}
     <<: [*defaults, *common-volumes]
     container_name: qbittorrent
     network_mode: "service:wireguard"

@@ -64,6 +64,10 @@ docker compose up --force-recreate -d
 - Local data is mounted from `./configs`.
 - Torrent downloads are stored in `./downloads`.
 
+## Image pinning
+- Images are pinned by default in `docker-compose.yml` via environment-backed tags.
+- Override image versions in `.env` using `WIREGUARD_IMAGE_TAG`, `FLARESOLVERR_IMAGE_TAG`, `JACKETT_IMAGE_TAG`, and `QBITTORRENT_IMAGE_TAG`.
+
 ## Startup order
 - `wireguard` and `flaresolverr` start independently (no dependencies).
 - `jackett` depends on `flaresolverr`.
