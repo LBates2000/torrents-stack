@@ -20,3 +20,24 @@ jobs:
 
       - name: Validate Compose config
         run: docker compose -f docker-compose.yml config
+
+  smoke-test:
+    needs: validate-compose
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start stack
+        run: docker compose up -d
+
+      - name: Show service status
+        run: docker compose ps
+
+      - name: Show logs on failure
+        if: failure()
+        run: docker compose logs --no-color --tail=200
+
+      - name: Tear down stack
+        if: always()
+        run: docker compose down -v --remove-orphans
