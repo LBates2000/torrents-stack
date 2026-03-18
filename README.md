@@ -1,6 +1,7 @@
 # Torrents Docker Stack
 
 [![Compose Validate](https://github.com/LBates2000/torrents-stack/actions/workflows/compose-validate.yml/badge.svg)](https://github.com/LBates2000/torrents-stack/actions/workflows/compose-validate.yml)
+[![Backup Restore Reminder](https://github.com/LBates2000/torrents-stack/actions/workflows/backup-restore-reminder.yml/badge.svg)](https://github.com/LBates2000/torrents-stack/actions/workflows/backup-restore-reminder.yml)
 
 This stack routes only qBittorrent through WireGuard.
 
@@ -102,6 +103,9 @@ docker compose up --force-recreate -d
 - Tail one service: `docker compose logs -f wireguard` (or `flaresolverr`, `jackett`, `qbittorrent`)
 
 ## Backup and restore
+The repository includes a monthly reminder workflow that opens a backup/restore verification issue:
+- `Backup Restore Reminder` workflow: https://github.com/LBates2000/torrents-stack/actions/workflows/backup-restore-reminder.yml
+
 Backup runtime config (PowerShell):
 ```powershell
 $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
