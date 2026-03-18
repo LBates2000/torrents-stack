@@ -150,8 +150,10 @@ docker compose ps --format "table {{.Name}}\t{{.State}}\t{{.Health}}\t{{.Status}
 - Redirect-based healthchecks are intentional: `301`/`302` can still mean the web UI is up before login.
 
 ## Changelog
+- `v1.0.2` (docs: onboarding and Jackett redirect clarifications): https://github.com/LBates2000/torrents-stack/releases/tag/v1.0.2
+- `v1.0.1` (operationally verified checkpoint): https://github.com/LBates2000/torrents-stack/releases/tag/v1.0.1
 - `v1.0.0` (hardened baseline): https://github.com/LBates2000/torrents-stack/releases/tag/v1.0.0
-- Future releases: https://github.com/LBates2000/torrents-stack/releases
+- All releases: https://github.com/LBates2000/torrents-stack/releases
 
 ## Project governance
 - Security policy: see `SECURITY.md`.
