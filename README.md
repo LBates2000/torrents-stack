@@ -130,6 +130,10 @@ docker compose ps --format "table {{.Name}}\t{{.State}}\t{{.Health}}\t{{.Status}
 - Keep `wireguard` service healthy before app services start.
 - Redirect-based healthchecks are intentional: `301`/`302` can still mean the web UI is up before login.
 
+## Changelog
+- `v1.0.0` (hardened baseline): https://github.com/LBates2000/torrents-stack/releases/tag/v1.0.0
+- Future releases: https://github.com/LBates2000/torrents-stack/releases
+
 ## Project governance
 - Security policy: see `SECURITY.md`.
 - Use GitHub issue templates for monthly maintenance and backup restore drills.
