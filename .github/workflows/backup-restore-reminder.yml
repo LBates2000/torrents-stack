@@ -1,0 +1,54 @@
+name: Backup Restore Reminder
+
+on:
+  schedule:
+    - cron: "0 14 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  create-reminder-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create monthly reminder issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const now = new Date();
+            const yyyy = now.getUTCFullYear();
+            const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
+            const title = `[Monthly Reminder ${yyyy}-${mm}] Run backup + restore verification`;
+
+            const { data: openIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100
+            });
+
+            const alreadyExists = openIssues.some(issue => issue.title === title);
+            if (alreadyExists) {
+              core.info(`Issue already exists for ${yyyy}-${mm}; skipping.`);
+              return;
+            }
+
+            const body = [
+              "This is your monthly reminder to validate backups and restore flow.",
+              "",
+              "Checklist:",
+              "- [ ] Run config backup command from README",
+              "- [ ] Restore to a test location or temporary stack",
+              "- [ ] Bring stack up and verify service health",
+              "- [ ] Confirm qBittorrent, Jackett, and FlareSolverr access",
+              "- [ ] Document any issues found"
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body
+            });
