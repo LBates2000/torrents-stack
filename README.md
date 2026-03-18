@@ -1,5 +1,7 @@
 # Torrents Docker Stack
 
+[![Compose Validate](https://github.com/LBates2000/torrents-stack/actions/workflows/compose-validate.yml/badge.svg)](https://github.com/LBates2000/torrents-stack/actions/workflows/compose-validate.yml)
+
 This stack routes only qBittorrent through WireGuard.
 
 ## How it works
