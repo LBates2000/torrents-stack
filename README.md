@@ -137,6 +137,7 @@ docker compose ps --format "table {{.Name}}\t{{.State}}\t{{.Health}}\t{{.Status}
 ## Project governance
 - Security policy: see `SECURITY.md`.
 - Use GitHub issue templates for monthly maintenance and backup restore drills.
+- License: MIT (`LICENSE`).
 
 ## Author
 - Lawrence Bates (<Lawrence.Bates@gmail.com>)
