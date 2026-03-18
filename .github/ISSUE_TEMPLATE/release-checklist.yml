@@ -1,0 +1,43 @@
+name: Release Checklist
+description: Checklist for preparing and publishing a release.
+title: "[Release] vX.Y.Z checklist"
+labels:
+  - release
+  - maintenance
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Target version
+      placeholder: v1.0.1
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: prep
+    attributes:
+      label: Pre-release checks
+      options:
+        - label: CI checks are green on `main`
+        - label: Branch protection is enforced on `main`
+        - label: README/CHANGELOG links updated as needed
+        - label: Backup completed before release
+        - label: Restore drill status reviewed (latest monthly issue)
+        - label: Image tag changes reviewed and tested
+
+  - type: checkboxes
+    id: publish
+    attributes:
+      label: Publish steps
+      options:
+        - label: Create annotated git tag
+        - label: Push tag to origin
+        - label: Create GitHub release notes
+        - label: Verify release URL and assets
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Release notes summary
+      description: Capture key changes and rollback notes.
+      placeholder: Highlights, known issues, rollback plan...
