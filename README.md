@@ -130,5 +130,9 @@ docker compose ps --format "table {{.Name}}\t{{.State}}\t{{.Health}}\t{{.Status}
 - Keep `wireguard` service healthy before app services start.
 - Redirect-based healthchecks are intentional: `301`/`302` can still mean the web UI is up before login.
 
+## Project governance
+- Security policy: see `SECURITY.md`.
+- Use GitHub issue templates for monthly maintenance and backup restore drills.
+
 ## Author
 - Lawrence Bates (<Lawrence.Bates@gmail.com>)

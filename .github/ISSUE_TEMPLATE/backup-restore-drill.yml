@@ -1,0 +1,34 @@
+name: Backup Restore Drill
+description: Track a backup restore verification test.
+title: "[Drill] Backup restore verification - YYYY-MM-DD"
+labels:
+  - backup
+  - drill
+body:
+  - type: input
+    id: backup_file
+    attributes:
+      label: Backup artifact tested
+      placeholder: backups/configs-YYYYMMDD-HHMMSS.zip
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: drill_steps
+    attributes:
+      label: Drill steps
+      options:
+        - label: Stopped stack (`docker compose down`)
+        - label: Restored backup archive to `configs/`
+        - label: Started stack (`docker compose up -d`)
+        - label: Verified service health for all containers
+        - label: Confirmed app access endpoints are working
+
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: Note recovery time and any failures.
+      placeholder: Recovery completed in XX minutes. Issues observed...
+    validations:
+      required: true

@@ -1,0 +1,29 @@
+name: Monthly Ops Checklist
+description: Monthly maintenance checklist for backup, health, and update hygiene.
+title: "[Monthly Ops] YYYY-MM maintenance"
+labels:
+  - maintenance
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Complete this checklist once per month.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Monthly tasks
+      options:
+        - label: Run backup of `configs/` and store artifact safely
+        - label: Perform restore verification from latest backup
+        - label: Confirm stack health (`docker compose ps`)
+        - label: Review Dependabot PRs and workflow updates
+        - label: Review pinned image tags and upstream release notes
+        - label: Validate external access to qBittorrent, Jackett, FlareSolverr
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes / findings
+      description: Record any issues, drift, or follow-up actions.
+      placeholder: What changed this month?
