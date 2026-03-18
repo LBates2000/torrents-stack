@@ -50,5 +50,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title,
-              body
+              body,
+              labels: ['backup', 'drill'],
+              assignees: ['LBates2000']
             });

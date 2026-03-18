@@ -1,6 +1,7 @@
 # Local runtime data
 configs/
 downloads/
+backups/
 
 # Local environment overrides
 .env
