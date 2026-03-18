@@ -1,0 +1,10 @@
+# Local runtime data
+configs/
+downloads/
+
+# Local environment overrides
+.env
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

@@ -1,0 +1,124 @@
+# Optimized Docker Compose for Torrents stack
+
+x-defaults: &defaults
+  restart: unless-stopped
+
+x-dns: &common-dns
+  dns:
+    - ${DNS1:-8.8.8.8}
+    - ${DNS2:-1.1.1.1}
+
+x-common-volumes: &common-volumes
+  volumes:
+    - ./configs:/config
+    - ./downloads:/downloads
+
+x-health: &common-health
+  interval: 20s
+  timeout: 10s
+  retries: 8
+  start_period: 30s
+
+networks:
+  app_net:
+    driver: bridge
+
+services:
+  # wireguard and flaresolverr start independently.
+  # jackett depends on flaresolverr.
+  # qbittorrent depends on wireguard, jackett, and flaresolverr.
+  # Only qbittorrent uses network_mode: service:wireguard.
+  # Jackett and FlareSolverr run on app_net with their own port mappings.
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest    
+    <<: [*defaults, *common-dns]
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Etc/UTC}
+      - SERVERURL=${WIREGUARD_SERVERURL:-example.com}
+      - SERVERPORT=${WIREGUARD_SERVERPORT:-51820}
+      - PEERS=${WIREGUARD_PEERS:-1}
+      - PEERDNS=${WIREGUARD_PEERDNS:-auto}
+      - ALLOWEDIPS=${WIREGUARD_ALLOWEDIPS:-0.0.0.0/0}
+      - LOG_CONFS=${WIREGUARD_LOG_CONFS:-false}
+    ports:
+      - "${WIREGUARD_SERVERPORT:-51820}:${WIREGUARD_SERVERPORT:-51820}/udp"
+      - "${QBITTORRENT_WEBUI_PORT:-8090}:8090"
+      - "${QBITTORRENT_TORRENTING_PORT:-6881}:6881"
+      - "${QBITTORRENT_TORRENTING_PORT:-6881}:6881/udp"
+    volumes:
+      - ./configs/wireguard:/config
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
+    healthcheck:
+      <<: *common-health
+      test: ["CMD", "bash", "-ec", "wg show interfaces | grep -qx 'wg0' && ip link show wg0 up > /dev/null 2>&1 && curl -fsS --max-time 8 ${WIREGUARD_IP_CHECK_URL:-https://api.ipify.org} | grep -Eq '^[0-9a-fA-F:.]+$'"]
+    networks:
+      - app_net
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    <<: [*defaults, *common-dns]
+    container_name: flaresolverr
+    ports:
+      - "${FLARESOLVERR_PORT:-8191}:8191"
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_FILE=${LOG_FILE:-none}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=${TZ:-Etc/UTC}
+    healthcheck:
+      <<: *common-health
+      test: ["CMD", "bash", "-c", "curl -sf http://localhost:8191 | grep -q '\"msg\".*\"FlareSolverr is ready!\"'"]
+    networks:
+      - app_net
+
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    <<: [*defaults, *common-dns, *common-volumes]
+    container_name: jackett
+    ports:
+      - "${JACKETT_PORT:-9117}:9117"
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Etc/UTC}
+      - AUTO_UPDATE=${JACKETT_AUTO_UPDATE:-true}
+      - RUN_OPTS=${JACKETT_RUN_OPTS:-}
+    healthcheck:
+      <<: *common-health
+      test: ["CMD", "bash", "-c", "curl -s -o /dev/null -w '%{http_code}' http://localhost:9117/ --max-time 10 | grep -qE '^(200|301|302)$'"]
+    depends_on:
+      flaresolverr:
+        condition: service_healthy
+    networks:
+      - app_net
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    <<: [*defaults, *common-volumes]
+    container_name: qbittorrent
+    network_mode: "service:wireguard"
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Etc/UTC}
+      - WEBUI_PORT=${QBITTORRENT_WEBUI_PORT:-8090}
+      - TORRENTING_PORT=${QBITTORRENT_TORRENTING_PORT:-6881}
+    healthcheck:
+      <<: *common-health
+      test: ["CMD", "bash", "-c", "curl -s -o /dev/null -w '%{http_code}' http://localhost:8090/ --max-time 10 | grep -qE '^(200|302)$'"]
+    depends_on:
+      wireguard:
+        condition: service_healthy
+      jackett:
+        condition: service_healthy
+      flaresolverr:
+        condition: service_healthy
