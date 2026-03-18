@@ -101,6 +101,26 @@ docker compose up --force-recreate -d
 - Tail all logs: `docker compose logs -f`
 - Tail one service: `docker compose logs -f wireguard` (or `flaresolverr`, `jackett`, `qbittorrent`)
 
+## Backup and restore
+Backup runtime config (PowerShell):
+```powershell
+$stamp = Get-Date -Format "yyyyMMdd-HHmmss"
+New-Item -ItemType Directory -Path .\backups -Force | Out-Null
+Compress-Archive -Path .\configs\* -DestinationPath (".\\backups\\configs-" + $stamp + ".zip") -Force
+```
+
+Restore runtime config (PowerShell):
+```powershell
+docker compose down
+Expand-Archive -Path .\backups\configs-<timestamp>.zip -DestinationPath .\configs -Force
+docker compose up -d
+```
+
+After restore, verify health:
+```powershell
+docker compose ps --format "table {{.Name}}\t{{.State}}\t{{.Health}}\t{{.Status}}"
+```
+
 ## Notes
 - If you change WireGuard peer config, restart the `wireguard` container.
 - Keep `wireguard` service healthy before app services start.
