@@ -31,6 +31,40 @@ jobs:
       - name: Start stack
         run: docker compose up -d
 
+      - name: Wait for healthy services
+        run: |
+          set -euo pipefail
+          services=(wireguard flaresolverr jackett qbittorrent)
+          timeout_seconds=240
+          start_time=$(date +%s)
+
+          for service in "${services[@]}"; do
+            while true; do
+              container_id=$(docker compose ps -q "$service")
+              if [ -z "$container_id" ]; then
+                echo "$service container not found"
+                exit 1
+              fi
+
+              health=$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "$container_id")
+              if [ "$health" = "healthy" ]; then
+                echo "$service is healthy"
+                break
+              fi
+
+              now=$(date +%s)
+              elapsed=$((now - start_time))
+              if [ "$elapsed" -ge "$timeout_seconds" ]; then
+                echo "Timed out waiting for $service to become healthy (last status: $health)"
+                docker compose ps
+                exit 1
+              fi
+
+              echo "Waiting for $service... current health: $health"
+              sleep 5
+            done
+          done
+
       - name: Show service status
         run: docker compose ps
 
