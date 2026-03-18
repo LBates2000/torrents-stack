@@ -102,6 +102,23 @@ docker compose up --force-recreate -d
 - Tail all logs: `docker compose logs -f`
 - Tail one service: `docker compose logs -f wireguard` (or `flaresolverr`, `jackett`, `qbittorrent`)
 
+## Incident runbook
+- Symptom: stack did not start
+	- Command: `docker compose ps`
+	- Expected: all services `running` and `healthy`
+- Symptom: qBittorrent UI unavailable
+	- Command: `docker compose logs --tail=100 qbittorrent wireguard`
+	- Expected: `wireguard` healthy and `qbittorrent` serving on `http://localhost:8090/`
+- Symptom: Jackett API/UI failing
+	- Command: `docker compose logs --tail=100 jackett flaresolverr`
+	- Expected: `jackett` healthcheck returns `200|301|302` and `flaresolverr` is ready
+- Symptom: VPN routing suspected down
+	- Command: `docker compose exec wireguard wg show`
+	- Expected: active `wg0` interface and peer/session data present
+- Emergency rollback
+	- Command: `git checkout v1.0.0; docker compose down; docker compose up -d`
+	- Expected: stack returns to last tagged baseline
+
 ## Backup and restore
 The repository includes a monthly reminder workflow that opens a backup/restore verification issue:
 - `Backup Restore Reminder` workflow: https://github.com/LBates2000/torrents-stack/actions/workflows/backup-restore-reminder.yml
